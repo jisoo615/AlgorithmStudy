@@ -28,8 +28,4 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-AlgorithmStudy.iml
-misc.xml
-modules.xml
-vcs.xml
-.idea/.ignore
+.idea/
