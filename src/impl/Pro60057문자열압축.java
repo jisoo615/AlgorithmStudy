@@ -1,6 +1,6 @@
 package impl;
 // https://school.programmers.co.kr/learn/courses/30/lessons/60057
-public class P60057문자열압축 {
+public class Pro60057문자열압축 {
     public static void main(String[] args) {
         System.out.println(new Solution().solution("abcabcabcabcdededededede"));
     }
