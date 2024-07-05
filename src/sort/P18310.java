@@ -17,19 +17,7 @@ public class P18310 {
             arr[i] = Integer.parseInt(st.nextToken());
         }
         Arrays.sort(arr);
-        int min = Integer.MAX_VALUE;
-        int answer = -1;
-        for (int i = 0; i < N; i++) {
-            int pos = arr[i];
-            int dist = 0;
-            for (int j = 0; j <N; j++) {
-                dist += Math.abs(arr[j] - pos);
-            }
-            if(dist < min){
-                min = dist;
-                answer = arr[i];
-            }
-        }
-        System.out.println(answer);
+        int index = N%2==0 ? N/2-1 : N/2;
+        System.out.println(arr[index]);
     }
 }
