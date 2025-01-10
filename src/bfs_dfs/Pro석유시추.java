@@ -1,53 +1,82 @@
 package bfs_dfs;
-
+// https://school.programmers.co.kr/learn/courses/30/lessons/250136
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class Pro석유시추 {
+    public static void main(String[] args) {
+        System.out.println(
+                new Solution().solution(
+                        new int[][]{
+                                {0, 0, 0, 1, 1, 1, 0, 0},
+                                {0, 0, 0, 0, 1, 1, 0, 0},
+                                {1, 1, 0, 0, 0, 1, 1, 0},
+                                {1, 1, 1, 0, 0, 0, 0, 0},
+                                {1, 1, 1, 0, 0, 0, 1, 1}
+                        }
+                )
+        );
+    }
+
     static class Solution {
         int[] dx = {-1, 1, 0, 0};// 상하좌우
         int[] dy = {0, 0, -1, 1};
         int N, M;
+        int[] oils;
 
         public int solution(int[][] land) {
-            // bfs 로 면적을 구하기
+            // bfs 로 모든 칸에 총 석유량 구해두기
             N = land.length;
             M = land[0].length;
-            int answer = -1;
-            for (int i = 0; i < M; i++) {
-                answer = Math.max(answer, bfs(i, land));
-            }
-            return answer;
+            oils = new int[M];// 각 열에 해당하는 석유량을 저장
+
+            bfs(land);
+
+            Arrays.sort(oils);
+            return oils[M-1];
         }
-        
-        public int bfs(int m, int[][] land){// 석유시추 y의 위치 (1..N, m)
-            // visited를 시추 마다 초기화 시켜서 진행, 하나의 시추 경우에 한번에 vistied 사용하기
-            int sum = 0;
+
+        public void bfs(int[][] land){
             boolean[][] visited = new boolean[N][M];
             Queue<Point> queue = new LinkedList<>();
-            for(int i = 0; i < N; i++){// 아래로 내려가는 이동하는 지점 스타터
-                if( visited[i][m] || land[i][m] == 0 ) continue;
+            // 모든 지역 돌면서 찾기
+            for(int i=0; i<N; i++){
+                for (int j = 0; j < M; j++) {
+                    if(visited[i][j] || land[i][j] == 0) continue;
 
-                Point start = new Point(i, m);
+                    // 석유있는 열을 중복걸러 저장하는 set
+                    HashSet<Integer> colSet = new HashSet<>();
 
-                queue.offer(start);
-                visited[i][m] = true;
-                int count = 1;
-                while(!queue.isEmpty()){
-                    Point p = queue.poll();
-                    for(int d = 0; d < 4; d++){
-                        int nx = p.x + dx[d];
-                        int ny = p.y + dy[d];
-                        if(nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
-                        if(visited[nx][ny] || land[nx][ny] == 0) continue;
-                        queue.offer(new Point(nx, ny));
-                        visited[nx][ny] = true;
-                        count++;
+                    // bfs시작
+                    Point start = new Point(i, j);
+                    colSet.add(j);
+                    int count = 1;
+                    queue.offer(start);
+                    visited[i][j] = true;
+
+                    while(!queue.isEmpty()){
+                        Point p = queue.poll();
+                        for(int d = 0; d < 4; d++){
+                            int nx = p.x + dx[d];
+                            int ny = p.y + dy[d];
+                            if(nx < 0 || ny < 0 || nx >= N || ny >= M) continue;
+                            if(visited[nx][ny] || land[nx][ny] == 0) continue;
+                            queue.offer(new Point(nx, ny));
+                            colSet.add(ny);
+                            count++;
+                            visited[nx][ny] = true;
+                        }
+                    }
+
+                    // 열별 총량 더하기
+                    for(int col : colSet){
+                        oils[col] += count;
                     }
                 }
-                sum += count;
             }
-            return sum;
+
         }
 
         static public class Point{
