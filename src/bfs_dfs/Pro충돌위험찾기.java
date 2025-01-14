@@ -7,8 +7,8 @@ import java.util.Objects;
 public class Pro충돌위험찾기 {
     public static void main(String[] args) {
         System.out.println(new Solution().solution(
-                new int[][] {{3, 2}, {6, 4}, {4, 7}, {1, 4}},
-                new int[][] {{4, 2}, {1, 3}, {4, 2}, {4, 3}}
+                new int[][] {{2, 2}, {2, 3}, {2, 7}, {6, 6}, {5, 2}},
+                new int[][] {{2, 3, 4, 5}, {1, 3, 4, 5}}
                 ));
     }
 
@@ -29,13 +29,15 @@ public class Pro충돌위험찾기 {
 
             for(int[] route : routes){
                 int second = 0;
+
+                // 첫 시작 지점 0초
+                Point first = pointMap.get(route[0]);
+                HashMap<Point, Integer> innerMap1 = conflictMap.computeIfAbsent(second, k -> new HashMap<>());
+                innerMap1.put(new Point(first.x, first.y), innerMap1.getOrDefault(new Point(first.x, first.y), 0) + 1);
+
                 for (int i = 0; i < route.length-1; i++) {
                     Point start = new Point(pointMap.get(route[i]).x, pointMap.get(route[i]).y);
                     Point end = new Point(pointMap.get(route[i+1]).x, pointMap.get(route[i+1]).y);
-
-                    HashMap<Point, Integer> innerMap1 = conflictMap.computeIfAbsent(second, k -> new HashMap<>());
-                    int conflict = innerMap1.getOrDefault(new Point(start.x, start.y), 0);
-                    innerMap1.put(new Point(start.x, start.y), conflict + 1);
 
                     while(start.x != end.x || start.y != end.y){
                         if(start.x < end.x) start.x += 1;
@@ -44,8 +46,7 @@ public class Pro충돌위험찾기 {
                         else if(start.y > end.y) start.y -= 1;
                         second++;
                         HashMap<Point, Integer> innerMap2 = conflictMap.computeIfAbsent(second, k -> new HashMap<>());
-                        conflict = innerMap2.getOrDefault(new Point(start.x, start.y), 0);
-                        innerMap2.put(new Point(start.x, start.y), conflict + 1);
+                        innerMap2.put(new Point(start.x, start.y), innerMap2.getOrDefault(new Point(start.x, start.y), 0) + 1);
                     }
                 }
             }
