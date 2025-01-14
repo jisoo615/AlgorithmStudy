@@ -7,8 +7,8 @@ import java.util.Objects;
 public class Pro충돌위험찾기 {
     public static void main(String[] args) {
         System.out.println(new Solution().solution(
-                new int[][] {{3, 2},{6, 4}, {4, 7}, {1, 4}},
-                new int[][] {{4, 2}, {1, 3}, {2, 4}}
+                new int[][] {{3, 2}, {6, 4}, {4, 7}, {1, 4}},
+                new int[][] {{4, 2}, {1, 3}, {4, 2}, {4, 3}}
                 ));
     }
 
@@ -30,22 +30,27 @@ public class Pro충돌위험찾기 {
             for(int[] route : routes){
                 int second = 0;
                 for (int i = 0; i < route.length-1; i++) {
-                    Point start = pointMap.get(route[i]);
-                    Point end = pointMap.get(route[i+1]);
+                    Point start = new Point(pointMap.get(route[i]).x, pointMap.get(route[i]).y);
+                    Point end = new Point(pointMap.get(route[i+1]).x, pointMap.get(route[i+1]).y);
+
+                    HashMap<Point, Integer> innerMap1 = conflictMap.computeIfAbsent(second, k -> new HashMap<>());
+                    int conflict = innerMap1.getOrDefault(new Point(start.x, start.y), 0);
+                    innerMap1.put(new Point(start.x, start.y), conflict + 1);
+
                     while(start.x != end.x || start.y != end.y){
                         if(start.x < end.x) start.x += 1;
                         else if(start.x > end.x) start.x -= 1;
                         else if(start.y < end.y) start.y += 1;
                         else if(start.y > end.y) start.y -= 1;
                         second++;
-                        HashMap<Point, Integer> pointCountMap = conflictMap.computeIfAbsent(second, k -> new HashMap<>());
-                        int conflict = pointCountMap.getOrDefault(new Point(start.x, start.y), 0);
-                        pointCountMap.put(new Point(start.x, start.y), conflict + 1);
+                        HashMap<Point, Integer> innerMap2 = conflictMap.computeIfAbsent(second, k -> new HashMap<>());
+                        conflict = innerMap2.getOrDefault(new Point(start.x, start.y), 0);
+                        innerMap2.put(new Point(start.x, start.y), conflict + 1);
                     }
                 }
             }
 
-            for (int i = 1; i <= conflictMap.size(); i++) {
+            for (int i = 0; i < conflictMap.size(); i++) {
                 for( Point p : conflictMap.get(i).keySet()){
                     if(conflictMap.get(i).get(p) >= 2) answer++;
                 }
